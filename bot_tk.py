@@ -69,18 +69,20 @@ class Gui(Frame):
         vl_command = self.register(self.validate_number)
         # Lenght
         Label(frame, text='Length (max=1000)').grid(row=0, column=0)
-        entry = Entry(frame, width=5, validate='all',
-                      validatecommand=(vl_command, '%P', 1000),
-                      textvariable=self.length)
+        entry = Spinbox(frame, width=5, validate='all',
+                        from_=1, to=100,
+                        validatecommand=(vl_command, '%P', 1000),
+                        textvariable=self.length)
         # Set default value
-        entry.insert(0, 1000)
+        self.length.set('200')
         entry.grid(row=0, column=1)
         # Order
         Label(frame, text='Order (max=5)').grid(row=0, column=2)
-        entry = Entry(frame, width=1, validate='all',
-                      validatecommand=(vl_command, '%P', 1000),
-                      textvariable=self.order)
-        entry.insert(0, 2)
+        entry = Spinbox(frame, width=1, validate='all',
+                        from_=1, to=5,
+                        validatecommand=(vl_command, '%P', 1000),
+                        textvariable=self.order)
+        self.order.set('2')
         entry.grid(row=0, column=3)
         self.btn_generate = Button(frame, text='Generate',
                                    command=self.generate_text,
@@ -170,7 +172,8 @@ class Gui(Frame):
         words = get_text(source_list)
         tg = TextGenerator(words, n=int(self.order.get()))
         g = tg.generate_text()
-        threading.Thread(target=self.fill_text, args=(g,)).start()
+        t = threading.Thread(target=self.fill_text, args=(g,))
+        t.start()
 
     def fill_text(self, g):
         for i in range(int(self.length.get())):
